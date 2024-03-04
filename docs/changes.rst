@@ -1,6 +1,16 @@
 Change log
 ==========
 
+Serializable (don't include in main)
+------------------------------------
+
+* Defines the ``BaseStore`` interface for request storage mechanisms.
+* Added the setting ``TOOLBAR_STORE_CLASS`` to configure the request
+  storage mechanism. Defaults to ``debug_toolbar.store.MemoryStore``.
+* Added setting ``SUPPRESS_SERIALIZATION_ERRORS`` to suppress
+  warnings when a ``TypeError`` occurs during a panel's serialization.
+
+
 Pending
 -------
 
@@ -52,7 +62,6 @@ Pending
 
 4.1.0 (2023-05-15)
 ------------------
-
 * Improved SQL statement formatting performance.  Additionally, fixed the
   indentation of ``CASE`` statements and stopped simplifying ``.count()``
   queries.

@@ -37,12 +37,13 @@ CONFIG_DEFAULTS = {
     "PROFILER_CAPTURE_PROJECT_CODE": True,
     "PROFILER_MAX_DEPTH": 10,
     "PROFILER_THRESHOLD_RATIO": 8,
+    "SUPPRESS_SERIALIZATION_ERRORS": True,
     "SHOW_TEMPLATE_CONTEXT": True,
     "SKIP_TEMPLATE_PREFIXES": ("django/forms/widgets/", "admin/widgets/"),
     "SQL_WARNING_THRESHOLD": 500,  # milliseconds
     "OBSERVE_REQUEST_CALLBACK": "debug_toolbar.toolbar.observe_request",
     "TOOLBAR_LANGUAGE": None,
-    "UPDATE_ON_FETCH": False,
+    "TOOLBAR_STORE_CLASS": "debug_toolbar.store.MemoryStore",
 }
 
 

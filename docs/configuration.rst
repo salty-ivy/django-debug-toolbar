@@ -150,6 +150,15 @@ Toolbar options
   the request doesn't originate from the toolbar itself, EG that
   ``is_toolbar_request`` is false for a given request.
 
+.. _TOOLBAR_STORE_CLASS:
+
+* ``TOOLBAR_STORE_CLASS``
+
+  Default: ``"debug_toolbar.store.MemoryStore"``
+
+  The path to the class to be used for storing the toolbar's data per request.
+
+
 .. _TOOLBAR_LANGUAGE:
 
 * ``TOOLBAR_LANGUAGE``
@@ -306,6 +315,15 @@ Panel options
   This value is used to determine the threshold of cumulative time to include
   the nested functions. The threshold is calculated by the root calls'
   cumulative time divided by this ratio.
+
+* ``SUPPRESS_SERIALIZATION_ERRORS``
+
+  Default: ``True``
+
+  If set to ``True`` then panels will log a warning if a ``TypeError`` is
+  raised when attempting to serialize a panel's stats rather than raising an
+  exception.. If set to ``False`` then the ``TypeError`` will be raised. The
+  default will eventually be set to ``False`` and removed entirely.
 
 * ``SHOW_TEMPLATE_CONTEXT``
 
