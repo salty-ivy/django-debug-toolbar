@@ -197,7 +197,7 @@ class TemplatesPanel(Panel):
             # Clean up context for better readability
             if self.toolbar.config["SHOW_TEMPLATE_CONTEXT"]:
                 context_list = template_data.get("context", [])
-                context["context"] = "\n".join(context_list)
+                context["context"] = "\n".join([str(item) for item in context_list])
             template_context.append(context)
 
         # Fetch context_processors/template_dirs from any template
