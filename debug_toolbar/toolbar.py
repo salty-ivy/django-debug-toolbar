@@ -1,6 +1,7 @@
 """
 The main DebugToolbar class that loads and renders the Toolbar.
 """
+
 import logging
 import uuid
 from functools import lru_cache

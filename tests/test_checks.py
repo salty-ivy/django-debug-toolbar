@@ -1,13 +1,7 @@
-import os
-import unittest
 from unittest.mock import patch
 
-import django
-from django.conf import settings
 from django.core.checks import Warning, run_checks
 from django.test import SimpleTestCase, override_settings
-
-PATH_DOES_NOT_EXIST = os.path.join(settings.BASE_DIR, "tests", "invalid_static")
 
 
 class ChecksTestCase(SimpleTestCase):
@@ -90,23 +84,6 @@ class ChecksTestCase(SimpleTestCase):
                 id="debug_toolbar.W004",
             ),
             messages,
-        )
-
-    @unittest.skipIf(django.VERSION >= (4,), "Django>=4 handles missing dirs itself.")
-    @override_settings(
-        STATICFILES_DIRS=[PATH_DOES_NOT_EXIST],
-    )
-    def test_panel_check_errors(self):
-        messages = run_checks()
-        self.assertEqual(
-            messages,
-            [
-                Warning(
-                    "debug_toolbar requires the STATICFILES_DIRS directories to exist.",
-                    hint="Running manage.py collectstatic may help uncover the issue.",
-                    id="debug_toolbar.staticfiles.W001",
-                )
-            ],
         )
 
     @override_settings(DEBUG_TOOLBAR_PANELS=[])
@@ -258,3 +235,11 @@ class ChecksTestCase(SimpleTestCase):
                 )
             ],
         )
+
+    @override_settings(
+        DEBUG_TOOLBAR_CONFIG={"OBSERVE_REQUEST_CALLBACK": lambda request: False}
+    )
+    def test_observe_request_callback_specified(self):
+        errors = run_checks()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].id, "debug_toolbar.W008")
