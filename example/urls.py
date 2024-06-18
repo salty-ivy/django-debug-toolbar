@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+from example.async_.urls import urlpatterns as async_urlpatterns
 from example.views import increment
 
 urlpatterns = [
@@ -35,3 +37,6 @@ urlpatterns = [
     path("ajax/increment", increment, name="ajax_increment"),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
+
+if settings.ASGI:
+    urlpatterns += async_urlpatterns

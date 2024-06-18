@@ -60,13 +60,14 @@ class DebugToolbarMiddleware:
     async_capable = True
 
     def __init__(self, get_response):
-        self.get_response = get_response
         if get_response is None:
             raise ValueError("get_response must be provided.")
         self.get_response = get_response
         # If get_response is a coroutine function, turns us into async mode so
         # a thread is not consumed during a whole request.
         self.async_mode = iscoroutinefunction(self.get_response)
+        print(self.async_mode)
+        print(self.get_response)
         if self.async_mode:
             # Mark the class as async-capable, but do the actual switch inside
             # __call__ to avoid swapping out dunder methods.
@@ -132,6 +133,9 @@ class DebugToolbarMiddleware:
         return response
 
     async def __acall__(self, request):
+        print("async middleware called")
+        print(type(request))
+        print(iscoroutinefunction(request))
         show_toolbar = get_show_toolbar()
         if not show_toolbar(request) or DebugToolbar.is_toolbar_request(request):
             return await self.get_response(request)

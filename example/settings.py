@@ -16,6 +16,7 @@ INTERNAL_IPS = ["127.0.0.1", "::1"]
 # Application definition
 
 INSTALLED_APPS = [
+    # "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -28,7 +29,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -60,7 +61,13 @@ TEMPLATES = [
 
 USE_TZ = True
 
-WSGI_APPLICATION = "example.wsgi.application"
+if os.environ.get("ASGI") == "True":
+    INSTALLED_APPS = ["daphne"] + INSTALLED_APPS
+    ASGI = True
+    ASGI_APPLICATION = "example.asgi.application"
+else:
+    ASGI = False
+    WSGI_APPLICATION = "example.wsgi.application"
 
 DEBUG_TOOLBAR_CONFIG = {"ROOT_TAG_EXTRA_ATTRS": "data-turbo-permanent hx-preserve"}
 
@@ -98,3 +105,19 @@ if os.environ.get("DB_BACKEND", "").lower() == "mysql":
     }
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "example", "static")]
+
+DEBUG_TOOLBAR_PANELS = [
+    "debug_toolbar.panels.history.HistoryPanel",
+    "debug_toolbar.panels.versions.VersionsPanel",
+    "debug_toolbar.panels.timer.TimerPanel",
+    "debug_toolbar.panels.settings.SettingsPanel",
+    "debug_toolbar.panels.headers.HeadersPanel",
+    # 'debug_toolbar.panels.request.RequestPanel',
+    # 'debug_toolbar.panels.sql.SQLPanel',
+    "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+    "debug_toolbar.panels.templates.TemplatesPanel",
+    "debug_toolbar.panels.cache.CachePanel",
+    "debug_toolbar.panels.signals.SignalsPanel",
+    "debug_toolbar.panels.redirects.RedirectsPanel",
+    "debug_toolbar.panels.profiling.ProfilingPanel",
+]

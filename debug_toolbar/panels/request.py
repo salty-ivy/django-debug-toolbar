@@ -24,6 +24,7 @@ class RequestPanel(Panel):
         return view_func.rsplit(".", 1)[-1]
 
     def generate_stats(self, request, response):
+        print(request, "request panel")
         self.record_stats(
             {
                 "get": get_sorted_request_variable(request.GET),
