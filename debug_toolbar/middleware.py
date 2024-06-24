@@ -69,8 +69,6 @@ class DebugToolbarMiddleware:
     async_capable = True
 
     def __init__(self, get_response):
-        if get_response is None:
-            raise ValueError("get_response must be provided.")
         self.get_response = get_response
         # If get_response is a coroutine function, turns us into async mode so
         # a thread is not consumed during a whole request.
@@ -80,10 +78,6 @@ class DebugToolbarMiddleware:
             # Mark the class as async-capable, but do the actual switch inside
             # __call__ to avoid swapping out dunder methods.
             markcoroutinefunction(self)
-
-    def _enable_panel_instrumentation(self, panels):
-        for panel in panels:
-            panel.enable_instrumentation()
 
     def __call__(self, request):
         if self.async_mode:
@@ -109,40 +103,7 @@ class DebugToolbarMiddleware:
             for panel in reversed(toolbar.enabled_panels):
                 panel.disable_instrumentation()
 
-        # Generate the stats for all requests when the toolbar is being shown,
-        # but not necessarily inserted.
-        for panel in reversed(toolbar.enabled_panels):
-            panel.generate_stats(request, response)
-            panel.generate_server_timing(request, response)
-
-        # Always render the toolbar for the history panel, even if it is not
-        # included in the response.
-        rendered = toolbar.render_toolbar()
-
-        for header, value in self.get_headers(request, toolbar.enabled_panels).items():
-            response.headers[header] = value
-
-        # Check for responses where the toolbar can't be inserted.
-        content_encoding = response.get("Content-Encoding", "")
-        content_type = response.get("Content-Type", "").split(";")[0]
-        if (
-            getattr(response, "streaming", False)
-            or content_encoding != ""
-            or content_type not in _HTML_TYPES
-        ):
-            return response
-
-        # Insert the toolbar in the response.
-        content = response.content.decode(response.charset)
-        insert_before = dt_settings.get_config()["INSERT_BEFORE"]
-        pattern = re.escape(insert_before)
-        bits = re.split(pattern, content, flags=re.IGNORECASE)
-        if len(bits) > 1:
-            bits[-2] += rendered
-            response.content = insert_before.join(bits)
-            if "Content-Length" in response:
-                response["Content-Length"] = len(response.content)
-        return response
+        return self._postprocess(request, response, toolbar)
 
     async def __acall__(self, request):
         # Decide whether the toolbar is active for this request.
@@ -167,6 +128,12 @@ class DebugToolbarMiddleware:
             for panel in reversed(toolbar.enabled_panels):
                 panel.disable_instrumentation()
 
+        return self._postprocess(request, response, toolbar)
+
+    def _postprocess(self, request, response, toolbar):
+        """
+        Post-process the response.
+        """
         # Generate the stats for all requests when the toolbar is being shown,
         # but not necessarily inserted.
         for panel in reversed(toolbar.enabled_panels):
