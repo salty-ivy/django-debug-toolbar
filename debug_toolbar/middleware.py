@@ -119,7 +119,6 @@ class DebugToolbarMiddleware:
             panel.enable_instrumentation()
         try:
             # Run panels like Django middleware.
-            print(request)
             response = await toolbar.process_request(request)
         finally:
             clear_stack_trace_caches()
