@@ -19,16 +19,11 @@ class PanelAsyncCompatibilityTestCase(TestCase):
         self.toolbar = None
 
     @override_settings(DEBUG_TOOLBAR_CONFIG=set_custom_toolbar_config())
-    def test_disable_nonasync_panels_with_asgi(self):
+    def test_async_panel_enabling_with_asgi(self):
         self.toolbar = DebugToolbar(self.request, lambda request: HttpResponse())
         for panel in self.toolbar.panels:
             panel.is_async = False
             self.assertFalse(panel.enabled)
-
-    @override_settings(DEBUG_TOOLBAR_CONFIG=set_custom_toolbar_config())
-    def test_enable_async_panels_with_asgi(self):
-        self.toolbar = DebugToolbar(self.request, lambda request: HttpResponse())
-        for panel in self.toolbar.panels:
             panel.is_async = True
             self.assertTrue(panel.enabled)
 
