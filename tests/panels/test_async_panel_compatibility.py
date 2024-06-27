@@ -2,26 +2,36 @@ from django.http import HttpResponse
 from django.test import AsyncRequestFactory, RequestFactory, TestCase
 from django.test.utils import override_settings
 
+from debug_toolbar import settings as dt_settings
 from debug_toolbar.toolbar import DebugToolbar
 
 
-@override_settings(DEBUG_TOOLBAR_CONFIG={"DISABLE_PANELS": {}})
+def set_custom_toolbar_config():
+    new_settings = dt_settings.get_config().copy()
+    new_settings["DISABLE_PANELS"] = {}
+    return new_settings
+
+
 class PanelAsyncCompatibilityTestCase(TestCase):
     def setUp(self):
         self.factory = AsyncRequestFactory()
         self.request = self.factory.get("/")
-        self.toolbar = DebugToolbar(self.request, lambda request: HttpResponse())
+        self.toolbar = None
 
-    def test_disable_nonasync_panel_with_asgi(self):
+    def test_disable_nonasync_panels_with_asgi(self):
+        self.toolbar = DebugToolbar(self.request, lambda request: HttpResponse())
         for panel in self.toolbar.panels:
             panel.is_async = False
             self.assertFalse(panel.enabled)
 
-    def test_enable_async_panel_with_asgi(self):
+    @override_settings(DEBUG_TOOLBAR_CONFIG=set_custom_toolbar_config())
+    def test_enable_async_panels_with_asgi(self):
+        self.toolbar = DebugToolbar(self.request, lambda request: HttpResponse())
         for panel in self.toolbar.panels:
             panel.is_async = True
             self.assertTrue(panel.enabled)
 
+    @override_settings(DEBUG_TOOLBAR_CONFIG=set_custom_toolbar_config())
     def test_enable_all_panels_with_wsgi(self):
         self.factory = RequestFactory()
         self.request = self.factory.get("/")
