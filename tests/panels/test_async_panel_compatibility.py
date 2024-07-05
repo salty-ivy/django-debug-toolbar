@@ -7,6 +7,12 @@ from debug_toolbar.toolbar import DebugToolbar
 
 
 def set_custom_toolbar_config():
+    """
+    Set custom toolbar configuration.
+
+    Returns a new configuration with DISABLE_PANELS set to an empty dictionary.
+    This allows all panels to be enabled by default.
+    """
     new_settings = dt_settings.get_config().copy()
     new_settings["DISABLE_PANELS"] = {}
     return new_settings
