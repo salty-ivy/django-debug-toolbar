@@ -101,7 +101,8 @@ class DebugToolbar:
             # incompatible with the toolbar until
             # https://github.com/jazzband/django-debug-toolbar/issues/1430
             # is resolved.
-            render_panels = self.request.META.get("wsgi.multiprocess", True)
+            # render_panels = self.request.META.get("wsgi.multiprocess", True)
+            render_panels = False
         return render_panels
 
     # Handle storing toolbars in memory and fetching them later on
