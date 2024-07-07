@@ -1,45 +1,39 @@
 from django.http import HttpResponse
 from django.test import AsyncRequestFactory, RequestFactory, TestCase
-from django.test.utils import override_settings
 
-from debug_toolbar import settings as dt_settings
+from debug_toolbar.panels import Panel
 from debug_toolbar.toolbar import DebugToolbar
 
 
-def set_custom_toolbar_config():
-    """
-    Set custom toolbar configuration.
+class MockAsyncPanel(Panel):
+    is_async = True
 
-    Returns a new configuration with DISABLE_PANELS set to an empty dictionary.
-    This allows all panels to be enabled by default.
-    """
-    new_settings = dt_settings.get_config().copy()
-    new_settings["DISABLE_PANELS"] = {}
-    return new_settings
+
+class MockSyncPanel(Panel):
+    is_async = False
 
 
 class PanelAsyncCompatibilityTestCase(TestCase):
     def setUp(self):
-        self.factory = AsyncRequestFactory()
-        self.request = self.factory.get("/")
-        self.toolbar = None
+        self.async_factory = AsyncRequestFactory()
+        self.wsgi_factory = RequestFactory()
 
-    @override_settings(DEBUG_TOOLBAR_CONFIG=set_custom_toolbar_config())
-    def test_async_panel_enabling_with_asgi(self):
-        self.toolbar = DebugToolbar(self.request, lambda request: HttpResponse())
-        for panel in self.toolbar.panels:
-            panel.is_async = False
-            self.assertFalse(panel.enabled)
-            panel.is_async = True
-            self.assertTrue(panel.enabled)
+    def test_panels_with_asgi(self):
+        async_request = self.async_factory.get("/")
+        toolbar = DebugToolbar(async_request, lambda request: HttpResponse())
 
-    @override_settings(DEBUG_TOOLBAR_CONFIG=set_custom_toolbar_config())
-    def test_enable_all_panels_with_wsgi(self):
-        self.factory = RequestFactory()
-        self.request = self.factory.get("/")
-        self.toolbar = DebugToolbar(self.request, lambda request: HttpResponse())
-        for panel in self.toolbar.panels:
-            panel.is_async = True
-            self.assertTrue(panel.enabled)
-            panel.is_async = False
-            self.assertTrue(panel.enabled)
+        async_panel = MockAsyncPanel(toolbar, async_request)
+        sync_panel = MockSyncPanel(toolbar, async_request)
+
+        self.assertTrue(async_panel.enabled)
+        self.assertFalse(sync_panel.enabled)
+
+    def test_panels_with_wsgi(self):
+        wsgi_request = self.wsgi_factory.get("/")
+        toolbar = DebugToolbar(wsgi_request, lambda request: HttpResponse())
+
+        async_panel = MockAsyncPanel(toolbar, wsgi_request)
+        sync_panel = MockSyncPanel(toolbar, wsgi_request)
+
+        self.assertTrue(async_panel.enabled)
+        self.assertTrue(sync_panel.enabled)
