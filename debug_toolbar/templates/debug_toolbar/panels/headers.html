@@ -38,7 +38,11 @@
   </tbody>
 </table>
 
-<h4>{% trans "WSGI environ" %}</h4>
+{% if environ_mode == "WSGI" %}
+  <h4>{% trans "WSGI environ" %}</h4>
+{% elif environ_mode == "ASGI" %}
+  <h4>{% trans "ASGI environ" %}</h4>
+{% endif %}
 
 <p>{% trans "Since the WSGI environ inherits the environment of the server, only a significant subset is shown below." %}</p>
 

@@ -1,3 +1,4 @@
+from django.core.handlers.asgi import ASGIRequest
 from django.utils.translation import gettext_lazy as _
 
 from debug_toolbar.panels import Panel
@@ -40,13 +41,19 @@ class HeadersPanel(Panel):
         if "Cookie" in self.request_headers:
             self.request_headers["Cookie"] = "=> see Request panel"
         self.environ = {k: v for (k, v) in wsgi_env if k in self.ENVIRON_FILTER}
+        self.environ_mode = "ASGI" if isinstance(request, ASGIRequest) else "WSGI"
         self.record_stats(
-            {"request_headers": self.request_headers, "environ": self.environ}
+            {
+                "request_headers": self.request_headers,
+                "environ": self.environ,
+                "environ_mode": self.environ_mode,
+            }
         )
         return super().process_request(request)
 
     def generate_stats(self, request, response):
         self.response_headers = dict(sorted(response.items()))
+
         self.record_stats({"response_headers": self.response_headers})
 
 

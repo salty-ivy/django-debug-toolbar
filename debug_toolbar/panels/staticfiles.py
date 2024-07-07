@@ -52,8 +52,6 @@ class DebugConfiguredStorage(LazyObject):
 
             configured_storage_cls = get_storage_class(settings.STATICFILES_STORAGE)
 
-        print("storage class: ", configured_storage_cls)
-
         class DebugStaticFilesStorage(configured_storage_cls):
             def url(self, path):
                 with contextlib.suppress(LookupError):
