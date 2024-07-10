@@ -1,5 +1,5 @@
 import contextlib
-from contextvars import ContextVar
+from contextvars import ContextVar, copy_context
 from os.path import join, normpath
 
 from django.conf import settings
@@ -59,6 +59,8 @@ class DebugConfiguredStorage(LazyObject):
                     # The ContextVar wasn't set yet. Since the toolbar wasn't properly
                     # configured to handle this request, we don't need to capture
                     # the static file.
+                    print(f"static file storing before context: {id(copy_context())}")
+                    print(StaticFile(path))
                     used_static_files.get().append(StaticFile(path))
                 return super().url(path)
 
@@ -111,12 +113,11 @@ class StaticFilesPanel(panels.Panel):
 
     def process_request(self, request):
         reset_token = used_static_files.set([])
+        print(f"Context before super.process_request: {id(copy_context())}")
         response = super().process_request(request)
-        # Make a copy of the used paths so that when the
-        # ContextVar is reset, our panel still has the data.
+        print(f"Context after super.process_request: {id(copy_context())}")
         self.used_paths = used_static_files.get().copy()
-        # Reset the ContextVar to be empty again, removing the reference
-        # to the list of used files.
+        print("file paths stored: ", self.used_paths)
         used_static_files.reset(reset_token)
         return response
 
