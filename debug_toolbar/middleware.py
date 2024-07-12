@@ -4,6 +4,7 @@ Debug Toolbar middleware
 
 import re
 import socket
+from contextvars import copy_context
 from functools import lru_cache
 
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction
@@ -82,7 +83,9 @@ class DebugToolbarMiddleware:
     def __call__(self, request):
         # Decide whether the toolbar is active for this request.
         if self.async_mode:
+            print(f"Context before entering __acall__: {id(copy_context())}")
             return self.__acall__(request)
+        print(f"Context entering __call__: {id(copy_context())}")
         # Decide whether the toolbar is active for this request.
         show_toolbar = get_show_toolbar()
         if not show_toolbar(request) or DebugToolbar.is_toolbar_request(request):
@@ -117,7 +120,9 @@ class DebugToolbarMiddleware:
             panel.enable_instrumentation()
         try:
             # Run panels like Django middleware.
+            print(f"Context before awaiting process_request: {id(copy_context())}")
             response = await toolbar.process_request(request)
+            print(f"Context after awaiting process_request: {id(copy_context())}")
         finally:
             clear_stack_trace_caches()
             # Deactivate instrumentation ie. monkey-unpatch. This must run

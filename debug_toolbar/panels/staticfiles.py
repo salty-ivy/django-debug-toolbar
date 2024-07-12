@@ -1,5 +1,6 @@
 import contextlib
-from contextvars import ContextVar, copy_context
+import queue
+from contextvars import copy_context
 from os.path import join, normpath
 
 from django.conf import settings
@@ -29,7 +30,8 @@ class StaticFile:
 
 
 # This will collect the StaticFile instances across threads.
-used_static_files = ContextVar("djdt_static_used_static_files")
+# used_static_files = ContextVar("djdt_static_used_static_files")
+queue_store = queue.Queue()
 
 
 class DebugConfiguredStorage(LazyObject):
@@ -60,8 +62,9 @@ class DebugConfiguredStorage(LazyObject):
                     # configured to handle this request, we don't need to capture
                     # the static file.
                     print(f"static file storing before context: {id(copy_context())}")
-                    print(StaticFile(path))
-                    used_static_files.get().append(StaticFile(path))
+                    # used_static_files.get().append(StaticFile(path))
+                    queue_store.put(StaticFile(path))
+                    print(queue_store.empty())
                 return super().url(path)
 
         self._wrapped = DebugStaticFilesStorage()
@@ -112,21 +115,26 @@ class StaticFilesPanel(panels.Panel):
         ) % {"num_used": num_used}
 
     def process_request(self, request):
-        reset_token = used_static_files.set([])
+        # reset_token = used_static_files.set([])
         print(f"Context before super.process_request: {id(copy_context())}")
         response = super().process_request(request)
         print(f"Context after super.process_request: {id(copy_context())}")
-        self.used_paths = used_static_files.get().copy()
-        print("file paths stored: ", self.used_paths)
-        used_static_files.reset(reset_token)
+
+        # self.used_paths = used_static_files.get().copy()
+        # used_static_files.reset(reset_token)
         return response
 
     def generate_stats(self, request, response):
+        print("generate_stats")
+        file_paths = []
+        while not queue_store.empty():
+            file_paths.append(queue_store.get())
+
         self.record_stats(
             {
                 "num_found": self.num_found,
-                "num_used": len(self.used_paths),
-                "staticfiles": self.used_paths,
+                "num_used": len(file_paths),
+                "staticfiles": file_paths,
                 "staticfiles_apps": self.get_staticfiles_apps(),
                 "staticfiles_dirs": self.get_staticfiles_dirs(),
                 "staticfiles_finders": self.get_staticfiles_finders(),
