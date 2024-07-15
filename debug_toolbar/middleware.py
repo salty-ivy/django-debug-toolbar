@@ -4,6 +4,7 @@ Debug Toolbar middleware
 
 import re
 import socket
+import threading
 from contextvars import copy_context
 from functools import lru_cache
 
@@ -108,6 +109,7 @@ class DebugToolbarMiddleware:
 
     async def __acall__(self, request):
         # Decide whether the toolbar is active for this request.
+        print(f"thread_id after super.process_request: {threading.get_ident()}")
         show_toolbar = get_show_toolbar()
         if not show_toolbar(request) or DebugToolbar.is_toolbar_request(request):
             response = await self.get_response(request)

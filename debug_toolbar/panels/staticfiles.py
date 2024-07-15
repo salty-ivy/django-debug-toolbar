@@ -64,7 +64,7 @@ class DebugConfiguredStorage(LazyObject):
                     print(f"static file storing before context: {id(copy_context())}")
                     # used_static_files.get().append(StaticFile(path))
                     queue_store.put(StaticFile(path))
-                    print(queue_store.empty())
+                    print("file path: ", path)
                 return super().url(path)
 
         self._wrapped = DebugStaticFilesStorage()
@@ -119,7 +119,6 @@ class StaticFilesPanel(panels.Panel):
         print(f"Context before super.process_request: {id(copy_context())}")
         response = super().process_request(request)
         print(f"Context after super.process_request: {id(copy_context())}")
-
         # self.used_paths = used_static_files.get().copy()
         # used_static_files.reset(reset_token)
         return response
@@ -128,6 +127,7 @@ class StaticFilesPanel(panels.Panel):
         print("generate_stats")
         file_paths = []
         while not queue_store.empty():
+            print("retrieving from queue", queue_store.get())
             file_paths.append(queue_store.get())
 
         self.record_stats(
