@@ -14,9 +14,7 @@ from django.utils.module_loading import import_string
 
 from debug_toolbar import settings as dt_settings
 from debug_toolbar.toolbar import DebugToolbar
-from debug_toolbar.utils import clear_stack_trace_caches
-
-_HTML_TYPES = ("text/html", "application/xhtml+xml")
+from debug_toolbar.utils import clear_stack_trace_caches, is_processable_html_response
 
 
 def show_toolbar(request):
@@ -89,6 +87,9 @@ class DebugToolbarMiddleware:
             return self.__acall__(request)
         print(f"Context entering __call__: {id(copy_context())}")
         # Decide whether the toolbar is active for this request.
+        if self.async_mode:
+            return self.__acall__(request)
+        # Decide whether the toolbar is active for this request.
         show_toolbar = get_show_toolbar()
         if not show_toolbar(request) or DebugToolbar.is_toolbar_request(request):
             return self.get_response(request)
@@ -153,13 +154,7 @@ class DebugToolbarMiddleware:
             response.headers[header] = value
 
         # Check for responses where the toolbar can't be inserted.
-        content_encoding = response.get("Content-Encoding", "")
-        content_type = response.get("Content-Type", "").split(";")[0]
-        if (
-            getattr(response, "streaming", False)
-            or content_encoding != ""
-            or content_type not in _HTML_TYPES
-        ):
+        if not is_processable_html_response(response):
             return response
 
         # Insert the toolbar in the response.

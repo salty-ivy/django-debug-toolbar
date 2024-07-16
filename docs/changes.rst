@@ -4,8 +4,40 @@ Change log
 Pending
 -------
 
+4.4.6 (2024-07-10)
+------------------
+
+* Changed ordering (and grammatical number) of panels and their titles in
+  documentation to match actual panel ordering and titles.
+* Skipped processing the alerts panel when response isn't a HTML response.
+
+4.4.5 (2024-07-05)
+------------------
+
+* Avoided crashing when the alerts panel was skipped.
+* Removed the inadvertently added hard dependency on Jinja2.
+
+4.4.4 (2024-07-05)
+------------------
+
+* Added check for StreamingHttpResponse in alerts panel.
+* Instrument the Django Jinja2 template backend. This only instruments
+  the immediate template that's rendered. It will not provide stats on
+  any parent templates.
+
+4.4.3 (2024-07-04)
+------------------
+
+* Added alerts panel with warning when form is using file fields
+  without proper encoding type.
 * Fixed overriding font-family for both light and dark themes.
 * Restored compatibility with ``iptools.IpRangeList``.
+* Limit ``E001`` check to likely error cases when the
+  ``SHOW_TOOLBAR_CALLBACK`` has changed, but the toolbar's URL
+  paths aren't installed.
+* Introduce helper function ``debug_toolbar_urls`` to
+  simplify installation.
+* Moved "1rem" height/width for SVGs to CSS properties.
 
 4.4.2 (2024-05-27)
 ------------------
