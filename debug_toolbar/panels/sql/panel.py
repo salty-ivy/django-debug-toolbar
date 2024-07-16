@@ -109,7 +109,7 @@ class SQLPanel(Panel):
     the request.
     """
 
-    is_async = False
+    is_async = True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -191,10 +191,12 @@ class SQLPanel(Panel):
     def enable_instrumentation(self):
         # This is thread-safe because database connections are thread-local.
         for connection in connections.all():
+            # print("DB Connection in SQL Panel:", id(connection))
             wrap_cursor(connection)
             connection._djdt_logger = self
 
     def disable_instrumentation(self):
+        # print("Disabling SQL Panel instrumentation")
         for connection in connections.all():
             connection._djdt_logger = None
 

@@ -82,6 +82,7 @@ class DebugToolbarMiddleware:
             markcoroutinefunction(self)
 
     def __call__(self, request):
+        print(f"thread_id in __call__ main thread: {threading.get_ident()}")
         # Decide whether the toolbar is active for this request.
         if self.async_mode:
             print(f"Context before entering __acall__: {id(copy_context())}")
@@ -109,7 +110,7 @@ class DebugToolbarMiddleware:
 
     async def __acall__(self, request):
         # Decide whether the toolbar is active for this request.
-        print(f"thread_id after super.process_request: {threading.get_ident()}")
+        print(f"thread_id in __acall__ main thread: {threading.get_ident()}")
         show_toolbar = get_show_toolbar()
         if not show_toolbar(request) or DebugToolbar.is_toolbar_request(request):
             response = await self.get_response(request)
