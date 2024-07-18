@@ -148,6 +148,7 @@ class DebugToolbarMiddleware:
 
         # Always render the toolbar for the history panel, even if it is not
         # included in the response.
+        print("rendering toolbar")
         rendered = toolbar.render_toolbar()
 
         for header, value in self.get_headers(request, toolbar.enabled_panels).items():
@@ -167,6 +168,10 @@ class DebugToolbarMiddleware:
             response.content = insert_before.join(bits)
             if "Content-Length" in response:
                 response["Content-Length"] = len(response.content)
+
+        print("enabling it instrumentation of staticfilepanel back again")
+        static_file_panel = toolbar.get_panel_by_id("StaticFilesPanel")
+        static_file_panel.enable_instrumentation()
         return response
 
     @staticmethod

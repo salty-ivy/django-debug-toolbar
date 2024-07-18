@@ -98,6 +98,7 @@ class StaticFilesPanel(panels.Panel):
         storage.staticfiles_storage = DebugConfiguredStorage()
 
     def disable_instrumentation(self):
+        print("disabling the instrumetation")
         storage.staticfiles_storage = _original_storage
 
     @property
