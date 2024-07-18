@@ -1,6 +1,6 @@
 import contextlib
-import queue
 from contextvars import copy_context
+from multiprocessing import Manager
 from os.path import join, normpath
 
 from django.conf import settings
@@ -31,7 +31,8 @@ class StaticFile:
 
 # This will collect the StaticFile instances across threads.
 # used_static_files = ContextVar("djdt_static_used_static_files")
-queue_store = queue.Queue()
+manager = Manager()
+shared_store = manager.dict()
 
 
 class DebugConfiguredStorage(LazyObject):
@@ -63,7 +64,7 @@ class DebugConfiguredStorage(LazyObject):
                     # the static file.
                     print(f"static file storing before context: {id(copy_context())}")
                     # used_static_files.get().append(StaticFile(path))
-                    queue_store.put(StaticFile(path))
+                    shared_store[path] = StaticFile(path)
                     print("file path: ", path)
                 return super().url(path)
 
@@ -126,11 +127,10 @@ class StaticFilesPanel(panels.Panel):
 
     def generate_stats(self, request, response):
         print("generate_stats")
-        file_paths = []
-        while not queue_store.empty():
-            print("retrieving from queue", queue_store.get())
-            file_paths.append(queue_store.get())
-
+        file_paths = shared_store.values()
+        shared_store.clear()  # clear the shared store
+        for file_path in shared_store.items():
+            print(file_path)
         self.record_stats(
             {
                 "num_found": self.num_found,
