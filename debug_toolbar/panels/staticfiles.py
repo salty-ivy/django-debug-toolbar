@@ -63,7 +63,7 @@ class DebugConfiguredStorage(LazyObject):
                     # configured to handle this request, we don't need to capture
                     # the static file.
                     print(f"static file storing before context: {id(copy_context())}")
-                    # used_static_files.get().append(StaticFile(path))
+                    # used_static_files.get().append(StaticFile(path))]
                     shared_store[path] = StaticFile(path)
                     print("file path: ", path)
                 return super().url(path)
@@ -129,8 +129,6 @@ class StaticFilesPanel(panels.Panel):
         print("generate_stats")
         file_paths = shared_store.values()
         shared_store.clear()  # clear the shared store
-        for file_path in shared_store.items():
-            print(file_path)
         self.record_stats(
             {
                 "num_found": self.num_found,

@@ -114,6 +114,7 @@ class DebugToolbarMiddleware:
         print(f"thread_id in __acall__ main thread: {threading.get_ident()}")
         show_toolbar = get_show_toolbar()
         if not show_toolbar(request) or DebugToolbar.is_toolbar_request(request):
+            print("***************** toolbar request")
             response = await self.get_response(request)
             return response
 
