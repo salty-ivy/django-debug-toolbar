@@ -116,15 +116,14 @@ class StaticFilesPanel(panels.Panel):
 
     def process_request(self, request):
         # reset_token = used_static_files.set([])
-        print(f"Context before super.process_request: {id(copy_context())}")
         response = super().process_request(request)
-        print(f"Context after super.process_request: {id(copy_context())}")
+        print(f"Context after staticfiles: process_request: {id(copy_context())}")
         # self.used_paths = used_static_files.get().copy()
         # used_static_files.reset(reset_token)
         return response
 
     def generate_stats(self, request, response):
-        print("generate_stats")
+        print("generate_stats for staticfiles panel")
         file_paths = shared_store.values()
         shared_store.clear()  # clear the shared store
         self.record_stats(

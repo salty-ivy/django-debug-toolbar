@@ -2,6 +2,7 @@ import contextlib
 import contextvars
 import datetime
 import json
+from contextvars import copy_context
 from time import perf_counter
 
 import django.test.testcases
@@ -26,6 +27,7 @@ except ImportError:
 # by the TemplatePanel to prevent the toolbar from issuing
 # additional queries.
 allow_sql = contextvars.ContextVar("debug-toolbar-allow-sql", default=True)
+print(f"sql panel context: {id(copy_context())}")
 
 
 class SQLQueryTriggered(Exception):
