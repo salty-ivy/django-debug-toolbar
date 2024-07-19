@@ -1,4 +1,3 @@
-import contextlib
 from contextvars import copy_context
 from multiprocessing import Manager
 from os.path import join, normpath
@@ -57,15 +56,10 @@ class DebugConfiguredStorage(LazyObject):
 
         class DebugStaticFilesStorage(configured_storage_cls):
             def url(self, path):
-                with contextlib.suppress(LookupError):
-                    # For LookupError:
-                    # The ContextVar wasn't set yet. Since the toolbar wasn't properly
-                    # configured to handle this request, we don't need to capture
-                    # the static file.
-                    print(f"static file storing before context: {id(copy_context())}")
-                    # used_static_files.get().append(StaticFile(path))]
-                    shared_store[path] = StaticFile(path)
-                    print("file path: ", path)
+                print(f"static file storing before context: {id(copy_context())}")
+                # used_static_files.get().append(StaticFile(path))]
+                shared_store[path] = StaticFile(path)
+                print("file path: ", path)
                 return super().url(path)
 
         self._wrapped = DebugStaticFilesStorage()
@@ -96,6 +90,10 @@ class StaticFilesPanel(panels.Panel):
         self.used_paths = []
 
     def enable_instrumentation(self):
+        # as the instrumentation keeps enabled, so requests for debug_toolbar can also store file paths in store
+        # clear the shared store to remove any static files stored from previous requests.
+        shared_store.clear()
+
         storage.staticfiles_storage = DebugConfiguredStorage()
 
     def disable_instrumentation(self):
