@@ -1,10 +1,8 @@
 import uuid
 from collections import defaultdict
-from contextvars import copy_context
 from copy import copy
 
 from django.db import connections
-from django.db.utils import ConnectionHandler
 from django.urls import path
 from django.utils.translation import gettext_lazy as _, ngettext
 
@@ -191,31 +189,17 @@ class SQLPanel(Panel):
             path("sql_profile/", views.sql_profile, name="sql_profile"),
         ]
 
-    @classmethod
-    def ready(cls):
-        original_create_connection = ConnectionHandler.create_connection
-
-        def create_connection(self, alias):
-            connection = original_create_connection(self, alias)
-            print("MAKEING NEW DB CONNECTION")
-            print("CONTEXT IN DB CONNECTION formation:", id(copy_context()))
-            wrap_cursor(connection)
-            return connection
-
-        ConnectionHandler.create_connection = create_connection
-
     def enable_instrumentation(self):
         # This is thread-safe because database connections are thread-local.
         for connection in connections.all():
-            # print("DB Connection in SQL Panel:", id(connection))
-            # wrap_cursor(connection)
+            print("DB Connection in SQL Panel:", id(connection))
+            wrap_cursor(connection)
             connection._djdt_logger = self
 
     def disable_instrumentation(self):
-        # print("Disabling SQL Panel instrumentation")
-        # for connection in connections.all():
-        #     connection._djdt_logger = None
-        pass
+        print("Disabling SQL Panel instrumentation")
+        for connection in connections.all():
+            connection._djdt_logger = None
 
     def generate_stats(self, request, response):
         colors = contrasting_color_generator()

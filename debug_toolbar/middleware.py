@@ -8,11 +8,12 @@ import threading
 from contextvars import copy_context
 from functools import lru_cache
 
-from asgiref.sync import iscoroutinefunction, markcoroutinefunction
+from asgiref.sync import iscoroutinefunction, markcoroutinefunction, sync_to_async
 from django.conf import settings
 from django.utils.module_loading import import_string
 
 from debug_toolbar import settings as dt_settings
+from debug_toolbar.panels.sql.panel import SQLPanel
 from debug_toolbar.toolbar import DebugToolbar
 from debug_toolbar.utils import clear_stack_trace_caches, is_processable_html_response
 
@@ -122,6 +123,8 @@ class DebugToolbarMiddleware:
 
         # Activate instrumentation ie. monkey-patch.
         for panel in toolbar.enabled_panels:
+            if isinstance(panel, SQLPanel):
+                await sync_to_async(panel.enable_instrumentation)()
             panel.enable_instrumentation()
         try:
             # Run panels like Django middleware.
