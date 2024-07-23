@@ -1,4 +1,3 @@
-from contextvars import copy_context
 from multiprocessing import Manager
 from os.path import join, normpath
 
@@ -31,7 +30,7 @@ class StaticFile:
 # This will collect the StaticFile instances across threads.
 # used_static_files = ContextVar("djdt_static_used_static_files")
 manager = Manager()
-shared_store = manager.dict()
+shared_store = manager.dict()  # We can also use a list, just like the contextvar.
 
 
 class DebugConfiguredStorage(LazyObject):
@@ -56,10 +55,8 @@ class DebugConfiguredStorage(LazyObject):
 
         class DebugStaticFilesStorage(configured_storage_cls):
             def url(self, path):
-                print(f"static file storing before context: {id(copy_context())}")
                 # used_static_files.get().append(StaticFile(path))]
                 shared_store[path] = StaticFile(path)
-                print("file path: ", path)
                 return super().url(path)
 
         self._wrapped = DebugStaticFilesStorage()
@@ -97,7 +94,6 @@ class StaticFilesPanel(panels.Panel):
         storage.staticfiles_storage = DebugConfiguredStorage()
 
     def disable_instrumentation(self):
-        print("disabling the instrumetation")
         storage.staticfiles_storage = _original_storage
 
     @property
@@ -117,13 +113,13 @@ class StaticFilesPanel(panels.Panel):
     def process_request(self, request):
         # reset_token = used_static_files.set([])
         response = super().process_request(request)
-        print(f"Context after staticfiles: process_request: {id(copy_context())}")
+        # print(f"Context after staticfiles: process_request: {id(copy_context())}")
         # self.used_paths = used_static_files.get().copy()
         # used_static_files.reset(reset_token)
         return response
 
     def generate_stats(self, request, response):
-        print("generate_stats for staticfiles panel")
+        # print("generate_stats for staticfiles panel")
         file_paths = shared_store.values()
         shared_store.clear()  # clear the shared store
         self.record_stats(

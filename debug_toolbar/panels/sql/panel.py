@@ -1,8 +1,10 @@
+import threading
 import uuid
 from collections import defaultdict
 from copy import copy
 
 from django.db import connections
+from django.db.utils import ConnectionHandler
 from django.urls import path
 from django.utils.translation import gettext_lazy as _, ngettext
 
@@ -142,7 +144,6 @@ class SQLPanel(Panel):
 
     def record(self, **kwargs):
         self._queries.append(kwargs)
-        print(self._queries)
         alias = kwargs["alias"]
         if alias not in self._databases:
             self._databases[alias] = {
@@ -189,10 +190,21 @@ class SQLPanel(Panel):
             path("sql_profile/", views.sql_profile, name="sql_profile"),
         ]
 
+    @classmethod
+    def ready(cls):
+        original_create_connection = ConnectionHandler.create_connection
+
+        def create_connection(self, alias):
+            connection = original_create_connection(self, alias)
+            print("THREAD ID WHILE MAKING NEW CONNECITON", threading.get_ident())
+            return connection
+
+        ConnectionHandler.create_connection = create_connection
+
     def enable_instrumentation(self):
         # This is thread-safe because database connections are thread-local.
         for connection in connections.all():
-            print("DB Connection in SQL Panel:", id(connection))
+            print("DB Connection in SQLPanel thread ID:", threading.get_ident())
             wrap_cursor(connection)
             connection._djdt_logger = self
 
