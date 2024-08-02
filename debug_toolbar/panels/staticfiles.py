@@ -3,10 +3,13 @@ from os.path import join, normpath
 
 from django.conf import settings
 from django.contrib.staticfiles import finders, storage
+from django.dispatch import Signal
 from django.utils.functional import LazyObject
 from django.utils.translation import gettext_lazy as _, ngettext
 
 from debug_toolbar import panels
+
+staticfiles_used_signal = Signal()
 
 
 class StaticFile:
@@ -57,6 +60,7 @@ class DebugConfiguredStorage(LazyObject):
             def url(self, path):
                 # used_static_files.get().append(StaticFile(path))]
                 shared_store[path] = StaticFile(path)
+                staticfiles_used_signal.send(sender=self, staticfiles=StaticFile(path))
                 return super().url(path)
 
         self._wrapped = DebugStaticFilesStorage()
@@ -92,9 +96,14 @@ class StaticFilesPanel(panels.Panel):
         shared_store.clear()
 
         storage.staticfiles_storage = DebugConfiguredStorage()
+        staticfiles_used_signal.connect(self._store_staticfile_info)
+
+    def _store_staticfile_info(self, sender, staticfiles, **kwargs):
+        print("signal called", staticfiles)
 
     def disable_instrumentation(self):
         storage.staticfiles_storage = _original_storage
+        staticfiles_used_signal.disconnect(self._store_staticfile_info)
 
     @property
     def num_used(self):
