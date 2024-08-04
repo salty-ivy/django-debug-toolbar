@@ -172,7 +172,7 @@ class DebugToolbar:
         # not have resolver_match set.
         try:
             resolver_match = request.resolver_match or resolve(
-                request.path, getattr(request, "urlconf", None)
+                request.path_info, getattr(request, "urlconf", None)
             )
         except Resolver404:
             return False
