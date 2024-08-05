@@ -115,7 +115,6 @@ class DebugToolbarMiddleware:
         print(f"thread_id in __acall__ main thread: {threading.get_ident()}")
         show_toolbar = get_show_toolbar()
         if not show_toolbar(request) or DebugToolbar.is_toolbar_request(request):
-            print("***************** toolbar request")
             response = await self.get_response(request)
             return response
 
@@ -128,9 +127,9 @@ class DebugToolbarMiddleware:
             panel.enable_instrumentation()
         try:
             # Run panels like Django middleware.
-            print(f"Context before awaiting process_request: {id(copy_context())}")
+            # print(f"Context before awaiting process_request: {id(copy_context())}")
             response = await toolbar.process_request(request)
-            print(f"Context after awaiting process_request: {id(copy_context())}")
+            # print(f"Context after awaiting process_request: {id(copy_context())}")
         finally:
             clear_stack_trace_caches()
             # Deactivate instrumentation ie. monkey-unpatch. This must run
@@ -152,7 +151,6 @@ class DebugToolbarMiddleware:
 
         # Always render the toolbar for the history panel, even if it is not
         # included in the response.
-        print("rendering toolbar")
         rendered = toolbar.render_toolbar()
 
         for header, value in self.get_headers(request, toolbar.enabled_panels).items():
@@ -173,9 +171,9 @@ class DebugToolbarMiddleware:
             if "Content-Length" in response:
                 response["Content-Length"] = len(response.content)
 
-        print("enabling it instrumentation of staticfilepanel back again")
-        static_file_panel = toolbar.get_panel_by_id("StaticFilesPanel")
-        static_file_panel.enable_instrumentation()
+        # print("enabling it instrumentation of staticfilepanel back again")
+        # static_file_panel = toolbar.get_panel_by_id("StaticFilesPanel")
+        # static_file_panel.enable_instrumentation()
         return response
 
     @staticmethod

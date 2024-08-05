@@ -1,5 +1,8 @@
-from multiprocessing import Manager
+import contextlib
+import uuid
+from contextvars import ContextVar, copy_context
 from os.path import join, normpath
+from threading import get_ident
 
 from django.conf import settings
 from django.contrib.staticfiles import finders, storage
@@ -31,9 +34,8 @@ class StaticFile:
 
 
 # This will collect the StaticFile instances across threads.
-# used_static_files = ContextVar("djdt_static_used_static_files")
-manager = Manager()
-shared_store = manager.dict()  # We can also use a list, just like the contextvar.
+used_static_files = ContextVar("djdt_static_used_static_files")
+request_id_store = ContextVar("request_id for unique identification of requests")
 
 
 class DebugConfiguredStorage(LazyObject):
@@ -59,8 +61,19 @@ class DebugConfiguredStorage(LazyObject):
         class DebugStaticFilesStorage(configured_storage_cls):
             def url(self, path):
                 # used_static_files.get().append(StaticFile(path))]
-                shared_store[path] = StaticFile(path)
-                staticfiles_used_signal.send(sender=self, staticfiles=StaticFile(path))
+                print(f"Context before sending signal: {id(copy_context())}")
+                print(f"thread_id in sync_to_async thread: {get_ident()}")
+
+                print(StaticFile(path))
+
+                with contextlib.suppress(LookupError):
+                    request_id = request_id_store.get()
+                    staticfiles_used_signal.send(
+                        sender=self,
+                        staticfiles=StaticFile(path),
+                        request_id=request_id,
+                        context=id(copy_context()),
+                    )
                 return super().url(path)
 
         self._wrapped = DebugStaticFilesStorage()
@@ -89,21 +102,41 @@ class StaticFilesPanel(panels.Panel):
         super().__init__(*args, **kwargs)
         self.num_found = 0
         self.used_paths = []
+        self.request_id = str(uuid.uuid4())
 
     def enable_instrumentation(self):
         # as the instrumentation keeps enabled, so requests for debug_toolbar can also store file paths in store
         # clear the shared store to remove any static files stored from previous requests.
-        shared_store.clear()
-
+        # shared_store.clear()
         storage.staticfiles_storage = DebugConfiguredStorage()
         staticfiles_used_signal.connect(self._store_staticfile_info)
+        used_static_files.set([])
+        request_id_store.set(self.request_id)
 
-    def _store_staticfile_info(self, sender, staticfiles, **kwargs):
-        print("signal called", staticfiles)
+    def _store_staticfile_info(
+        self, sender, staticfiles, request_id, context, **kwargs
+    ):
+        # print("signal called")
+        print(f"Context in signal: {context}")
+        # print(f"thread_id in sync_to_async thread: {get_ident()}")
+
+        with contextlib.suppress(LookupError):
+            # For LookupError:
+            # The ContextVar wasn't set yet. Since the toolbar wasn't properly
+            # configured to handle this request, we don't need to capture
+            # the static file.
+            if request_id_store.get() == self.request_id:
+                staticfiles_list = used_static_files.get()
+                staticfiles_list.append(staticfiles)
 
     def disable_instrumentation(self):
-        storage.staticfiles_storage = _original_storage
+        print("diable instrumentation")
+        # storage.staticfiles_storage = _original_storage
+        for receiver in staticfiles_used_signal.receivers:
+            print(receiver)
         staticfiles_used_signal.disconnect(self._store_staticfile_info)
+        with contextlib.suppress(LookupError):
+            print(used_static_files.get())
 
     @property
     def num_used(self):
@@ -128,9 +161,9 @@ class StaticFilesPanel(panels.Panel):
         return response
 
     def generate_stats(self, request, response):
-        # print("generate_stats for staticfiles panel")
-        file_paths = shared_store.values()
-        shared_store.clear()  # clear the shared store
+        print("context in storing stats: ", id(copy_context()))
+        file_paths = used_static_files.get().copy()
+        used_static_files.get().clear()
         self.record_stats(
             {
                 "num_found": self.num_found,
