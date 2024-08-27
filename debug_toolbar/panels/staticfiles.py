@@ -61,10 +61,7 @@ class DebugConfiguredStorage(LazyObject):
         class DebugStaticFilesStorage(configured_storage_cls):
             def url(self, path):
                 # used_static_files.get().append(StaticFile(path))]
-                print(f"Context before sending signal: {id(copy_context())}")
                 print(f"thread_id in sync_to_async thread: {get_ident()}")
-
-                print(StaticFile(path))
 
                 with contextlib.suppress(LookupError):
                     request_id = request_id_store.get()
@@ -117,7 +114,6 @@ class StaticFilesPanel(panels.Panel):
         self, sender, staticfiles, request_id, context, **kwargs
     ):
         # print("signal called")
-        print(f"Context in signal: {context}")
         # print(f"thread_id in sync_to_async thread: {get_ident()}")
 
         with contextlib.suppress(LookupError):
@@ -130,13 +126,8 @@ class StaticFilesPanel(panels.Panel):
                 staticfiles_list.append(staticfiles)
 
     def disable_instrumentation(self):
-        print("diable instrumentation")
         # storage.staticfiles_storage = _original_storage
-        for receiver in staticfiles_used_signal.receivers:
-            print(receiver)
         staticfiles_used_signal.disconnect(self._store_staticfile_info)
-        with contextlib.suppress(LookupError):
-            print(used_static_files.get())
 
     @property
     def num_used(self):
@@ -161,7 +152,6 @@ class StaticFilesPanel(panels.Panel):
         return response
 
     def generate_stats(self, request, response):
-        print("context in storing stats: ", id(copy_context()))
         file_paths = used_static_files.get().copy()
         used_static_files.get().clear()
         self.record_stats(

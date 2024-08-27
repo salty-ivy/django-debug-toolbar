@@ -5,7 +5,6 @@ Debug Toolbar middleware
 import re
 import socket
 import threading
-from contextvars import copy_context
 from functools import lru_cache
 
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction, sync_to_async
@@ -84,9 +83,7 @@ class DebugToolbarMiddleware:
         print(f"thread_id in __call__ main thread: {threading.get_ident()}")
         # Decide whether the toolbar is active for this request.
         if self.async_mode:
-            print(f"Context before entering __acall__: {id(copy_context())}")
             return self.__acall__(request)
-        print(f"Context entering __call__: {id(copy_context())}")
         # Decide whether the toolbar is active for this request.
         if self.async_mode:
             return self.__acall__(request)
@@ -119,6 +116,7 @@ class DebugToolbarMiddleware:
             return response
 
         toolbar = DebugToolbar(request, self.get_response)
+        print("toolbar", toolbar)
 
         # Activate instrumentation ie. monkey-patch.
         for panel in toolbar.enabled_panels:
