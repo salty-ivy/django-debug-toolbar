@@ -214,7 +214,7 @@ class DebugToolbarTestCase(BaseTestCase):
 # Check out the following links for more information:
 
 # https://forum.djangoproject.com/t/are-concurrent-database-queries-in-asgi-a-thing/24136/2
-# https://github.com/jazzband/django-debug-toolbar/issues/1828
+# https://github.com/django-commons/django-debug-toolbar/issues/1828
 
 # Work that is done so far for asynchrounous database backend
 # https://github.com/django/deps/blob/main/accepted/0009-async.rst#the-orm

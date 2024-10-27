@@ -89,7 +89,7 @@ def _duplicate_query_key(query):
     raw_params = () if query["raw_params"] is None else tuple(query["raw_params"])
     # repr() avoids problems because of unhashable types
     # (e.g. lists) when used as dictionary keys.
-    # https://github.com/jazzband/django-debug-toolbar/issues/1091
+    # https://github.com/django-commons/django-debug-toolbar/issues/1091
     return (query["raw_sql"], repr(raw_params))
 
 

@@ -2,22 +2,18 @@
 Django Debug Toolbar |latest-version|
 =====================================
 
-|jazzband| |build-status| |coverage| |docs| |python-support| |django-support|
+|build-status| |coverage| |docs| |python-support| |django-support|
 
 .. |latest-version| image:: https://img.shields.io/pypi/v/django-debug-toolbar.svg
    :target: https://pypi.org/project/django-debug-toolbar/
    :alt: Latest version on PyPI
 
-.. |jazzband| image:: https://jazzband.co/static/img/badge.svg
-   :target: https://jazzband.co/
-   :alt: Jazzband
-
-.. |build-status| image:: https://github.com/jazzband/django-debug-toolbar/workflows/Test/badge.svg
-   :target: https://github.com/jazzband/django-debug-toolbar/actions
+.. |build-status| image:: https://github.com/django-commons/django-debug-toolbar/workflows/Test/badge.svg
+   :target: https://github.com/django-commons/django-debug-toolbar/actions/workflows/test.yml
    :alt: Build Status
 
 .. |coverage| image:: https://img.shields.io/badge/Coverage-94%25-green
-   :target: https://github.com/jazzband/django-debug-toolbar/actions/workflows/test.yml?query=branch%3Amain
+   :target: https://github.com/django-commons/django-debug-toolbar/actions/workflows/test.yml?query=branch%3Amain
    :alt: Test coverage status
 
 .. |docs| image:: https://img.shields.io/readthedocs/django-debug-toolbar/latest.svg
@@ -38,7 +34,7 @@ more details about the panel's content.
 
 Here's a screenshot of the toolbar in action:
 
-.. image:: https://raw.github.com/jazzband/django-debug-toolbar/main/example/django-debug-toolbar.png
+.. image:: https://raw.github.com/django-commons/django-debug-toolbar/main/example/django-debug-toolbar.png
    :alt: Django Debug Toolbar screenshot
 
 In addition to the built-in panels, a number of third-party panels are
@@ -59,4 +55,4 @@ itself. If you like it, please consider contributing!
 The Django Debug Toolbar was originally created by Rob Hudson <rob@cogit8.org>
 in August 2008 and was further developed by many contributors_.
 
-.. _contributors: https://github.com/jazzband/django-debug-toolbar/graphs/contributors
+.. _contributors: https://github.com/django-commons/django-debug-toolbar/graphs/contributors

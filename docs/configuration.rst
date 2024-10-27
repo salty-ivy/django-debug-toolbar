@@ -406,4 +406,4 @@ could add a **debug_toolbar/base.html** template override to your project:
 
 The list of CSS variables are defined at
 `debug_toolbar/static/debug_toolbar/css/toolbar.css
-<https://github.com/jazzband/django-debug-toolbar/blob/main/debug_toolbar/static/debug_toolbar/css/toolbar.css>`_
+<https://github.com/django-commons/django-debug-toolbar/blob/main/debug_toolbar/static/debug_toolbar/css/toolbar.css>`_

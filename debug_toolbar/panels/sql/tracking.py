@@ -53,8 +53,8 @@ def wrap_cursor(connection):
             # some code in the wild which does not follow that convention,
             # so we pass on the arguments even though it's not clean.
             # See:
-            # https://github.com/jazzband/django-debug-toolbar/pull/615
-            # https://github.com/jazzband/django-debug-toolbar/pull/896
+            # https://github.com/django-commons/django-debug-toolbar/pull/615
+            # https://github.com/django-commons/django-debug-toolbar/pull/896
             logger = connection._djdt_logger
             cursor = connection._djdt_cursor(*args, **kwargs)
             if logger is None:
@@ -66,7 +66,7 @@ def wrap_cursor(connection):
 
         def chunked_cursor(*args, **kwargs):
             # prevent double wrapping
-            # solves https://github.com/jazzband/django-debug-toolbar/issues/1239
+            # solves https://github.com/django-commons/django-debug-toolbar/issues/1239
             logger = connection._djdt_logger
             cursor = connection._djdt_chunked_cursor(*args, **kwargs)
             if logger is not None and not isinstance(cursor, DjDTCursorWrapperMixin):
