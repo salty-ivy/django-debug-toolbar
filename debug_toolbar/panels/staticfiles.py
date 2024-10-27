@@ -17,8 +17,9 @@ class StaticFile:
     Representing the different properties of a static file.
     """
 
-    def __init__(self, path):
+    def __init__(self, *, path, url):
         self.path = path
+        self._url = url
 
     def __str__(self):
         return self.path
@@ -27,7 +28,7 @@ class StaticFile:
         return finders.find(self.path)
 
     def url(self):
-        return storage.staticfiles_storage.url(self.path)
+        return self._url
 
 
 # This will record and map the StaticFile instances with its associated
@@ -58,6 +59,7 @@ class DebugConfiguredStorage(LazyObject):
 
         class DebugStaticFilesStorage(configured_storage_cls):
             def url(self, path):
+                url = super().url(path)
                 with contextlib.suppress(LookupError):
                     # For LookupError:
                     # The ContextVar wasn't set yet. Since the toolbar wasn't properly
@@ -66,10 +68,10 @@ class DebugConfiguredStorage(LazyObject):
                     request_id = request_id_context_var.get()
                     record_static_file_signal.send(
                         sender=self,
-                        staticfile=StaticFile(path),
+                        staticfile=StaticFile(path=str(path), url=url),
                         request_id=request_id,
                     )
-                return super().url(path)
+                return url
 
         self._wrapped = DebugStaticFilesStorage()
 
