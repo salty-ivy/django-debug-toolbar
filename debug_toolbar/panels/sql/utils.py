@@ -1,4 +1,4 @@
-from functools import lru_cache
+from functools import cache, lru_cache
 from html import escape
 
 import sqlparse
@@ -107,7 +107,7 @@ def parse_sql(sql, *, simplify=False):
     return "".join(stack.run(sql))
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_filter_stack(*, simplify):
     stack = sqlparse.engine.FilterStack()
     if simplify:

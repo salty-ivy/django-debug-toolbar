@@ -4,7 +4,7 @@ Debug Toolbar middleware
 
 import re
 import socket
-from functools import lru_cache
+from functools import cache
 
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction
 from django.conf import settings
@@ -46,7 +46,7 @@ def show_toolbar(request):
     return False
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_show_toolbar():
     # If SHOW_TOOLBAR_CALLBACK is a string, which is the recommended
     # setup, resolve it to the corresponding callable.

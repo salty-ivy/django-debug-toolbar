@@ -51,7 +51,7 @@ packages = [
 path = "debug_toolbar/__init__.py"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 
 fix = true
 show-fixes = true
