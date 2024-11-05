@@ -32,19 +32,19 @@ repos:
         args:
         - --trailing-comma=es5
 -   repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.13.0
+    rev: v9.14.0
     hooks:
     -   id: eslint
         additional_dependencies:
-            - "eslint@v9.13.0"
-            - "@eslint/js@v9.13.0"
+            - "eslint@v9.14.0"
+            - "@eslint/js@v9.14.0"
             - "globals"
         files: \.js?$
         types: [file]
         args:
         - --fix
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 'v0.7.1'
+    rev: 'v0.7.2'
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
