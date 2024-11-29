@@ -1,6 +1,6 @@
 # Add tests to example app to check how the toolbar is used
 # when running tests for a project.
-# See https://github.com/jazzband/django-debug-toolbar/issues/1405
+# See https://github.com/django-commons/django-debug-toolbar/issues/1405
 
 from django.test import TestCase
 from django.urls import reverse

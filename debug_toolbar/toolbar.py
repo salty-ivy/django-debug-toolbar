@@ -5,7 +5,7 @@ The main DebugToolbar class that loads and renders the Toolbar.
 import re
 import uuid
 from collections import OrderedDict
-from functools import lru_cache
+from functools import cache
 
 from django.apps import apps
 from django.conf import settings
@@ -110,7 +110,7 @@ class DebugToolbar:
                 # The wsgi.multiprocess case of being True isn't supported until the
                 # toolbar has resolved the following issue:
                 # This type of set up is most likely
-                # https://github.com/jazzband/django-debug-toolbar/issues/1430
+                # https://github.com/django-commons/django-debug-toolbar/issues/1430
                 render_panels = self.request.META.get("wsgi.multiprocess", True)
         return render_panels
 
@@ -180,7 +180,7 @@ class DebugToolbar:
         return resolver_match.namespaces and resolver_match.namespaces[-1] == APP_NAME
 
     @staticmethod
-    @lru_cache(maxsize=None)
+    @cache
     def get_observe_request():
         # If OBSERVE_REQUEST_CALLBACK is a string, which is the recommended
         # setup, resolve it to the corresponding callable.

@@ -1,7 +1,9 @@
+from pathlib import Path
+
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.shortcuts import render
-from django.test import AsyncRequestFactory
+from django.test import AsyncRequestFactory, RequestFactory
 
 from ..base import BaseTestCase
 
@@ -58,3 +60,19 @@ class StaticFilesPanelTestCase(BaseTestCase):
             "django.contrib.staticfiles.finders.AppDirectoriesFinder", content
         )
         self.assertValidHTML(content)
+
+    def test_path(self):
+        def get_response(request):
+            # template contains one static file
+            return render(
+                request,
+                "staticfiles/path.html",
+                {"path": Path("additional_static/base.css")},
+            )
+
+        self._get_response = get_response
+        request = RequestFactory().get("/")
+        response = self.panel.process_request(request)
+        self.panel.generate_stats(self.request, response)
+        self.assertEqual(self.panel.num_used, 1)
+        self.assertIn('"/static/additional_static/base.css"', self.panel.content)

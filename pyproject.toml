@@ -40,24 +40,18 @@ dependencies = [
   "sqlparse>=0.2",
 ]
 urls.Download = "https://pypi.org/project/django-debug-toolbar/"
-urls.Homepage = "https://github.com/jazzband/django-debug-toolbar"
-
-[tool.hatch.build.targets.sdist]
-# Jazzband's release process is limited to 2.2 metadata
-core-metadata-version = "2.2"
+urls.Homepage = "https://github.com/django-commons/django-debug-toolbar"
 
 [tool.hatch.build.targets.wheel]
 packages = [
   "debug_toolbar",
 ]
-# Jazzband's release process is limited to 2.2 metadata
-core-metadata-version = "2.2"
 
 [tool.hatch.version]
 path = "debug_toolbar/__init__.py"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 
 fix = true
 show-fixes = true

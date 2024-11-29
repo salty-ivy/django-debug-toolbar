@@ -13,9 +13,10 @@ interfere with common JavaScript frameworks.
 How to
 ------
 
-The example project requires a working installation of Django::
+The example project requires a working installation of Django and a few other
+packages::
 
-    $ python -m pip install Django
+    $ python -m pip install -r requirements_dev.txt
 
 The following command must run from the root directory of Django Debug Toolbar,
 i.e. the directory that contains ``example/``::

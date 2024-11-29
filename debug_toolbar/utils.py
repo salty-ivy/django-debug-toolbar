@@ -5,8 +5,9 @@ import linecache
 import os.path
 import sys
 import warnings
+from collections.abc import Sequence
 from pprint import PrettyPrinter, pformat
-from typing import Any, Sequence
+from typing import Any
 
 from asgiref.local import Local
 from django.http import QueryDict

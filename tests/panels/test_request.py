@@ -92,7 +92,7 @@ class RequestPanelTestCase(BaseTestCase):
         """
         Verify that the toolbar doesn't crash if request.POST contains unexpected data.
 
-        See https://github.com/jazzband/django-debug-toolbar/issues/1621
+        See https://github.com/django-commons/django-debug-toolbar/issues/1621
         """
         self.request.POST = [{"a": 1}, {"b": 2}]
         response = self.panel.process_request(self.request)
@@ -112,7 +112,7 @@ class RequestPanelTestCase(BaseTestCase):
         """
         Verify the session is sorted when all keys are strings.
 
-        See  https://github.com/jazzband/django-debug-toolbar/issues/1668
+        See  https://github.com/django-commons/django-debug-toolbar/issues/1668
         """
         self.request.session = {
             1: "value",

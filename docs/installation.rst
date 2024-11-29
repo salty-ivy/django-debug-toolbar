@@ -31,7 +31,7 @@ instead with the following command:
 
 .. code-block:: console
 
-    $ python -m pip install -e git+https://github.com/jazzband/django-debug-toolbar.git#egg=django-debug-toolbar
+    $ python -m pip install -e git+https://github.com/django-commons/django-debug-toolbar.git#egg=django-debug-toolbar
 
 If you're upgrading from a previous version, you should review the
 :doc:`change log <changes>` and look for specific upgrade instructions.
@@ -84,7 +84,7 @@ Add ``"debug_toolbar"`` to your ``INSTALLED_APPS`` setting:
     ]
 .. note:: Check  out the configuration example in the
    `example app
-   <https://github.com/jazzband/django-debug-toolbar/tree/main/example>`_
+   <https://github.com/django-commons/django-debug-toolbar/tree/main/example>`_
    to learn how to set up the toolbar to function smoothly while running
    your tests.
 

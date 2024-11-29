@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, NamedTuple, Optional, Tuple
+from typing import Any, NamedTuple, Optional
 
 from django import template as dj_template
 
@@ -14,7 +14,7 @@ class InspectStack(NamedTuple):
     index: int
 
 
-TidyStackTrace = List[Tuple[str, int, str, str, Optional[Any]]]
+TidyStackTrace = list[tuple[str, int, str, str, Optional[Any]]]
 
 
 class RenderContext(dj_template.context.RenderContext):
