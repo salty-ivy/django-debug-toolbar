@@ -57,7 +57,7 @@ def template_source(request):
         source = format_html("<code>{}</code>", source)
     else:
         source = highlight(source, HtmlDjangoLexer(), HtmlFormatter())
-        source = mark_safe(source)
+        source = mark_safe(f"<code>{source}</code>")
 
     content = render_to_string(
         "debug_toolbar/panels/template_source.html",
