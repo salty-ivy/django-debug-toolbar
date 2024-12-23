@@ -56,8 +56,8 @@ def template_source(request):
     except ModuleNotFoundError:
         source = format_html("<code>{}</code>", source)
     else:
-        source = highlight(source, HtmlDjangoLexer(), HtmlFormatter())
-        source = mark_safe(f"<code>{source}</code>")
+        source = highlight(source, HtmlDjangoLexer(), HtmlFormatter(wrapcode=True))
+        source = mark_safe(source)
 
     content = render_to_string(
         "debug_toolbar/panels/template_source.html",
