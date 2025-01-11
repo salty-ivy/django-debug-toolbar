@@ -4,12 +4,18 @@ Change log
 Pending
 -------
 
+
+5.0.0 (2025-01-11)
+------------------
+
 * Added Python 3.13 to the CI matrix.
 * Removed support for Python 3.8 as it has reached end of life.
 * Converted to Django Commons PyPI release process.
 * Fixed a crash which occurred when using non-``str`` static file values.
 * Documented experimental async support.
 * Improved troubleshooting doc for incorrect mime types for .js static files
+
+Please see everything under 5.0.0-alpha as well.
 
 5.0.0-alpha (2024-09-01)
 ------------------------
