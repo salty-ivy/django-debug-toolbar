@@ -9,6 +9,7 @@ Pending
 * Converted to Django Commons PyPI release process.
 * Fixed a crash which occurred when using non-``str`` static file values.
 * Documented experimental async support.
+* Improved troubleshooting doc for incorrect mime types for .js static files
 
 5.0.0-alpha (2024-09-01)
 ------------------------
