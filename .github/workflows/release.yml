@@ -1,10 +1,6 @@
 name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
 
-on:
-  push:
-    # For the main branch only.
-    branches:
-      - main
+on: push
 
 env:
   PYPI_URL: https://pypi.org/p/django-debug-toolbar
@@ -99,7 +95,7 @@ jobs:
 
   publish-to-testpypi:
     name: Publish Python 🐍 distribution 📦 to TestPyPI
-    # Always publish to TestPyPI on every push to main.
+    if: startsWith(github.ref, 'refs/tags/')  # only publish to Test PyPI on tag pushes
     needs:
     - build
     runs-on: ubuntu-latest
