@@ -4,6 +4,9 @@ Change log
 Pending
 -------
 
+5.0.1 (2025-01-13)
+------------------
+* Fixing the build and release process. No functional changes.
 
 5.0.0 (2025-01-11)
 ------------------
