@@ -4,6 +4,8 @@ Change log
 Pending
 -------
 
+* Added Django 5.2 to the tox matrix.
+
 5.0.1 (2025-01-13)
 ------------------
 * Fixing the build and release process. No functional changes.
