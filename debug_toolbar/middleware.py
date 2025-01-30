@@ -6,7 +6,12 @@ import re
 import socket
 from functools import cache
 
-from asgiref.sync import iscoroutinefunction, markcoroutinefunction, sync_to_async, async_to_sync
+from asgiref.sync import (
+    async_to_sync,
+    iscoroutinefunction,
+    markcoroutinefunction,
+    sync_to_async,
+)
 from django.conf import settings
 from django.utils.module_loading import import_string
 
@@ -44,6 +49,7 @@ def show_toolbar(request):
 
     # No test passed
     return False
+
 
 @cache
 def show_toolbar_func_or_path():

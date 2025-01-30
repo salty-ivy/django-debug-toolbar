@@ -61,10 +61,14 @@ class MiddlewareSyncAsyncCompatibilityTestCase(TestCase):
         self.assertIn(b"djdt", response.content)
 
     @override_settings(DEBUG=True)
-    @patch("debug_toolbar.middleware.show_toolbar_func_or_path", return_value=ashow_toolbar_if_staff)
+    @patch(
+        "debug_toolbar.middleware.show_toolbar_func_or_path",
+        return_value=ashow_toolbar_if_staff,
+    )
     def test_async_show_toolbar_callback_sync_middleware(self, mocked_show):
         def get_response(request):
             return HttpResponse("<html><body>Hello world</body></html>")
+
         middleware = DebugToolbarMiddleware(get_response)
 
         request = self.factory.get("/")
@@ -73,10 +77,14 @@ class MiddlewareSyncAsyncCompatibilityTestCase(TestCase):
         self.assertIn(b"djdt", response.content)
 
     @override_settings(DEBUG=True)
-    @patch("debug_toolbar.middleware.show_toolbar_func_or_path", return_value=show_toolbar_if_staff)
+    @patch(
+        "debug_toolbar.middleware.show_toolbar_func_or_path",
+        return_value=show_toolbar_if_staff,
+    )
     async def test_sync_show_toolbar_callback_async_middleware(self, mocked_show):
         async def get_response(request):
             return HttpResponse("<html><body>Hello world</body></html>")
+
         middleware = DebugToolbarMiddleware(get_response)
 
         request = self.async_factory.get("/")
