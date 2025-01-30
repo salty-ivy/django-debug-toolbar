@@ -11,7 +11,7 @@ def require_show_toolbar(view):
     def inner(request, *args, **kwargs):
         from debug_toolbar.middleware import get_show_toolbar
 
-        show_toolbar = get_show_toolbar()
+        show_toolbar = get_show_toolbar(async_mode=False)
         if not show_toolbar(request):
             raise Http404
 

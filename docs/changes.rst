@@ -5,6 +5,8 @@ Pending
 -------
 
 * Added Django 5.2 to the tox matrix.
+* Wrap ``SHOW_TOOLBAR_CALLBACK`` function with ``sync_to_async``
+  or ``async_to_sync`` to allow sync/async compatibility.
 
 5.0.1 (2025-01-13)
 ------------------
