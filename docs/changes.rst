@@ -8,6 +8,7 @@ Pending
 * Updated package metadata to include well-known labels.
 * Wrap ``SHOW_TOOLBAR_CALLBACK`` function with ``sync_to_async``
   or ``async_to_sync`` to allow sync/async compatibility.
+* Make ``require_toolbar`` decorator compatible to async views.
 
 5.0.1 (2025-01-13)
 ------------------
